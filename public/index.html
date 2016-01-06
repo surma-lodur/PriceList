@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="priceListApp">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Preisliste</title>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" integrity="sha384-aUGj/X2zp5rLCbBxumKTCw2Z50WgIr1vs/PFN4praOTvYXWlVyh2UtNUU0KAUhAX" crossorigin="anonymous">
+
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/datejs/1.0/date.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/1.4.5/numeral.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
+  <script src="js/controllers.js"></script>
+</head>
+
+<body ng-controller="PriceListController">
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#">Artikelübersicht</a>
+      </div>
+    </div>
+  </nav>
+  <div class="container">
+    <div style="padding-top: 150px">
+      <table class="table table-hover table-striped table-bordered">
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Aktualisiert</th>
+          <th>Letzten 10 Preisänderungen</th>
+        </tr>
+        <tr ng-repeat="item in items">
+          <th>{{item.id}}</th>
+          <td>
+            <a target="_blank" ng-href="{{item.url}}">{{item.title}}</a>
+          </td>
+          <td>{{item.updated_at}}</td>
+          <td>
+
+            <span ng-if="!item.expanded">
+              <button type="button" class="btn btn-default btn-xs" ng-click="item.expanded = true">
+                <span class="glyphicon glyphicon-triangle-bottom glyphicon-align-left" aria-hidden="true"></span>
+                Anzeigen
+              </button>
+            </span>
+            <span ng-if="item.expanded">
+              <button type="button" class="btn btn-info btn-xs" ng-click="item.expanded = false">
+                <span class="glyphicon glyphicon-triangle-top glyphicon-align-left" aria-hidden="true"></span>
+                Weniger
+              </button>
+              <table class="table table-condensed">
+                <tr ng-repeat="item_price in item.last_price_changes">
+                  <td>{{item_price.price}} {{item_price.currency}}</td>
+                  <td>{{item_price.stock_state}}</td>
+                  <td>{{item_price.created_at}}</td>
+                </tr>
+              </table>
+            </span>
+
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</body>
+
+</html>

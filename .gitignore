@@ -8,6 +8,9 @@
 /test/tmp/
 /test/version_tmp/
 /tmp/
+/db/*.db
+/price_list/parser/*.rb
+/spec/parser/*
 
 ## Specific to RubyMotion:
 .dat*
