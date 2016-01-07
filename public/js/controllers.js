@@ -76,7 +76,7 @@ var priceListCrtl = priceListApp.controller('PriceListController', ['$scope', '$
     $http.post('admin/v1/items.json', {
       url: url
     }).then(function(response) {
-      $scope.items.push(response.data);
+      $scope.items.push($scope.applyItemI18n(response.data));
       jQuery('input#itemUrl').val('');
       jQuery('#addItem').button('reset');
     }, function(response) {
