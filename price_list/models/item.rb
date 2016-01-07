@@ -13,10 +13,12 @@ class PriceList::Models::Item < ActiveRecord::Base
     end
   end
 
-  has_many :item_prices, dependent: :destroy, touch: true
+  has_many :item_prices, dependent: :destroy
+  belongs_to :list
+
   has_many(:last_price_changes, -> { order('created_at DESC').limit(10) }, class_name: 'PriceList::Models::ItemPrice', foreign_key: 'item_id')
 
-  after_create :execute_parser
+  before_create :execute_parser
 
   validates :url, uniqueness: true
 
@@ -28,10 +30,13 @@ class PriceList::Models::Item < ActiveRecord::Base
       price = item_prices.build(price:       parser.price,
                                 stock_state: parser.stock_state,
                                 currency:    parser.currency)
-      price.destroy unless price.valid?
-
-                    end
-    save
+      if not price.valid?
+        price.destroy
+      elsif self.persisted?
+        self.save
+        self.touch
+      end
+    end
   rescue => e
     puts "#{id} #{title}"
     puts e

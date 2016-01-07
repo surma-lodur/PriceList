@@ -24,20 +24,36 @@
 
 <body ng-controller="PriceListController">
   <nav class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container">
+    <div class="container-fluid">
       <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
         <a class="navbar-brand" href="#">Artikelübersicht</a>
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          <li ng-class="adminActiveClass()"><a ng-click="gainAdminPrivileges()">Admin</a></li>
+          <li><a href="swagger_doc" target="_blank">Swagger API</a></li>
+        </ul>
       </div>
     </div>
   </nav>
-  <div class="container">
+  <div class="container-fluid">
     <div style="padding-top: 150px">
       <table class="table table-hover table-striped table-bordered">
         <tr>
           <th>ID</th>
           <th>Name</th>
           <th>Aktualisiert</th>
-          <th>Letzten 10 Preisänderungen</th>
+          <th>Preis</th>
+          <th>Bestand</th>
+          <th></th>
         </tr>
         <tr ng-repeat="item in items">
           <th>{{item.id}}</th>
@@ -45,31 +61,62 @@
             <a target="_blank" ng-href="{{item.url}}">{{item.title}}</a>
           </td>
           <td>{{item.updated_at}}</td>
+          <td>{{item.last_price.price}} {{item.last_price.currency}}</td>
+          <td>{{item.last_price.stock_state}}</td>
           <td>
-
-            <span ng-if="!item.expanded">
-              <button type="button" class="btn btn-default btn-xs" ng-click="item.expanded = true">
-                <span class="glyphicon glyphicon-triangle-bottom glyphicon-align-left" aria-hidden="true"></span>
+            <div class="btn-group btn-group-xs" role="group" aria-label="Detailed">
+              <button type="button" class="btn btn-default" ng-click="detailedInfosFor(item)" data-toggle="modal" data-target="#detailedInfoModal">
+                <span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
                 Anzeigen
               </button>
-            </span>
-            <span ng-if="item.expanded">
-              <button type="button" class="btn btn-info btn-xs" ng-click="item.expanded = false">
-                <span class="glyphicon glyphicon-triangle-top glyphicon-align-left" aria-hidden="true"></span>
-                Weniger
+              <button ng-if="admin_mode" type="button" class="btn btn-danger"
+               ng-click="deleteItem(item)">
+                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                Löschen
               </button>
-              <table class="table table-condensed">
-                <tr ng-repeat="item_price in item.last_price_changes">
+            </div>
+          </td>
+        </tr>
+        <tr ng-if="admin_mode" class="success">
+          <th>#</th>
+          <td colspan="4">
+                <input type="url" class="form-control" ng-model="new_item_url" id="itemUrl" placeholder="URL">
+          </td>
+          <td>
+            <button type="button" class="btn btn-success btn-sm" ng-click="createItem(new_item_url)" id="addItem" data-loading-text="..."  autocomplete="off">
+              <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+            </button>
+          </td>
+        </tr>
+      </table>
+
+
+      <!-- Modal -->
+      <div class="modal fade" id="detailedInfoModal" tabindex="-1" role="dialog" aria-labelledby="detailedInfo">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+              <h4 class="modal-title" id="detailedInfo">{{items[currentItemIndex].title}}</h4>
+            </div>
+            <div class="modal-body">
+              <h5>Preisverlauf</h5>
+              <table class="table table-hover table-striped table-condensed">
+                <tr ng-repeat="item_price in items[currentItemIndex].last_price_changes">
                   <td>{{item_price.price}} {{item_price.currency}}</td>
                   <td>{{item_price.stock_state}}</td>
                   <td>{{item_price.created_at}}</td>
                 </tr>
               </table>
-            </span>
-
-          </td>
-        </tr>
-      </table>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Schließen</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </body>

@@ -15,12 +15,12 @@ class StartSchema < ActiveRecord::Migration
       t.timestamps
     end
     add_reference(:item_prices, :item)
-    puts 'ran up method'
+  rescue => e
+    puts 'already migrated'
   end
 
   def down
     drop_table :items
     drop_table :item_prices
-    puts 'ran down method'
   end
 end

@@ -19,7 +19,7 @@ group :development, :test do
   gem 'guard-rspec'
   gem 'rack-test'
   if Gem.win_platform?
-    gem 'win32console' 
+    gem 'win32console'
     gem 'wdm'
   end
 end

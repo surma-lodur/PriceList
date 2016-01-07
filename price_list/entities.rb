@@ -13,6 +13,9 @@ module PriceList::Entities
     expose :title, documentation: { type: 'string', desc: 'Title of the article' }
     expose :updated_at
     expose :url
-    expose :last_price_changes, using: PreisListe::Entities::ItemPrice
+    expose :last_price_changes, using: PriceList::Entities::ItemPrice
+    expose :last_price, using: PriceList::Entities::ItemPrice do |item|
+      item.last_price_changes.first
+    end
   end
 end
