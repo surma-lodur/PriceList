@@ -1,5 +1,5 @@
 
-require  File.join(File.dirname(__FILE__), '..', 'preis_liste')
+require  File.join(File.dirname(__FILE__), '..', 'price_list')
 
 module Clockwork
   handler do |job|

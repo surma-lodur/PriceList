@@ -1,1 +1,1 @@
-clockwork ./preis_liste/clockwork.rb
+clockwork ./price_list/clockwork.rb
