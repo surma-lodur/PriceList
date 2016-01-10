@@ -33,7 +33,9 @@ class PriceList::Parser
     end
 
     def responsible?(url)
-      url =~ /Regexp.escape(responsible_base_url)/
+      pp %r{#{Regexp.escape(responsible_base_url)}}
+      pp url
+      url =~ %r{#{Regexp.escape(responsible_base_url)}}
     end
 
     def responsible_class_name(url)

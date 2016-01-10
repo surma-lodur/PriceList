@@ -1,0 +1,26 @@
+<!-- Modal -->
+<div aria-labelledby="editItem" class="modal fade" id="editItemModal" role="dialog" tabindex="-1">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" id="detailedInfo" ng-bind="items[currentItemIndex].title"></h4>
+      </div>
+      <div class="modal-body">
+        <ul class="nav nav-pills nav-stacked">
+          <li ng-class="tabActiveClass(null)" role="presentation">
+            <a href="#" ng-click="editCurrentItem(null)">Keine Liste</a>
+          </li>
+          <li role="presentation" ng-repeat="list in lists" ng-class="tabActiveClass(list)">
+              <a href="#" ng-bind="list.title" ng-click="editCurrentItem(list)"></a>
+          </li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" data-dismiss="modal" type="button">Schließen</button>
+      </div>
+    </div>
+  </div>
+</div>

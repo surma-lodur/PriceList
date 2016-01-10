@@ -1,0 +1,24 @@
+<!-- Modal -->
+<div aria-labelledby="detailedInfo" class="modal fade" id="newListModal" role="dialog" tabindex="-1">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" id="detailedInfo">Neue Liste</h4>
+      </div>
+      <div class="modal-body">
+        <input class="form-control" id="newListTitle" ng-model="new_list_title" placeholder="Titel" type="text">
+      </div>
+      <div class="modal-footer">
+        <button autocomplete="off" class="btn btn-success" data-loading-text="..." id="createList" ng-click="createList(new_list_title)" type="button">
+          <span aria-hidden="true" class="glyphicon glyphicon-plus"></span>
+        </button>
+        <button autocomplete="off" class="btn btn-danger" data-dismiss="modal" type="button">
+          <span aria-hidden="true" class="glyphicon glyphicon-remove"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,40 @@
+<nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button aria-expanded="false" class="navbar-toggle collapsed" data-target="#bs-example-navbar-collapse-1" data-toggle="collapse" type="button">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Artikelübersicht</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li ng-if="!admin_mode">
+          <a ng-click="gainAdminPrivileges()">
+            <span aria-hidden="true" class="glyphicon glyphicon-eye-close"></span>
+            Admin
+          </a>
+        </li>
+        <li class="dropdown" ng-if="admin_mode">
+          <a aria-expanded="false" aria-haspopup="true" class="dropdown-toggle" data-toggle="dropdown" href="#" role="button">
+            <span aria-hidden="true" class="glyphicon glyphicon-eye-open"></span>
+            Admin
+            <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu">
+            <li>
+              <a href="#" data-target="#newListModal" data-toggle="modal">Liste hinzufügen</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="swagger_doc" target="_blank">Swagger API</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

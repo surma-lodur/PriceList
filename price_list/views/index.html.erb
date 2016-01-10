@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="priceListApp">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="IE=edge" http-equiv="X-UA-Compatible">
+  <meta content="width=device-width, initial-scale=1" name="viewport">
+  <title>Preisliste</title>
+  <!-- Latest compiled and minified CSS -->
+  <link href="https://cdn.jsdelivr.net/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/bootstrap/3.3.6/css/bootstrap-theme.min.css" rel="stylesheet">
+  <style></style>
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://cdn.jsdelivr.net/g/jquery@2.1.4,bootstrap@3.3.6,datejs@1.0,numeraljs@1.5.0(numeral.min.js+languages.min.js),angularjs@1.4.7,underscorejs@1.8.3,jquery.dotdotdot@1.7.4"></script>
+  <script src="js/controllers.js"></script>
+
+</head>
+
+<body ng-controller="PriceListController" data-as-sortable="dragControlListeners" data-ng-model="items">
+  <%= render_partial('_menu') %>
+  <%= render_partial('_new_list_modal') %>
+    <div class="container-fluid">
+      <div style="padding-top: 75px">
+        <ul class="nav nav-tabs">
+          <li role="presentation" ng-class="tabActiveClass(null)"><a href="#" ng-click="setCurrentList(null)">Unkategorisiert</a></li>
+          <li role="presentation" ng-repeat="list in lists" ng-class="tabActiveClass(list)">
+            <a href="#" ng-bind="list.title" ng-click="setCurrentList(list)"></a>
+          </li>
+        </ul>
+        <%= render_partial('_table') %>
+      </div>
+    </div>
+    <%= render_partial('_modal_price_details') %>
+    <%= render_partial('_modal_edit_item') %>
+  </body>
+</html>

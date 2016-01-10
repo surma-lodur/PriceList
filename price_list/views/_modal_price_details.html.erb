@@ -1,0 +1,39 @@
+<!-- Modal -->
+<div aria-labelledby="detailedInfo" class="modal fade" id="detailedInfoModal" role="dialog" tabindex="-1">
+  <div class="modal-dialog  modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" id="detailedInfo" ng-bind="items[currentItemIndex].title"></h4>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-5 col-md-10 col-sm-9 col-xs-13" id="line-chart">
+              <div class="panel panel-default">
+                <div class="panel-heading">Preisverlauf</div>
+                <div class="panel-body">
+                  <img class="img-responsive" ng-src="{{items[currentItemIndex].price_chart_url}}">
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4 col-md-10 col-sm-9 col-xs-13">
+              <table class="table table-hover table-striped table-condensed">
+                <tr ng-repeat="item_price in items[currentItemIndex].last_price_changes">
+                  <td>{{item_price.price}}&nbsp;{{item_price.currency}}</td>
+                  <td>{{item_price.stock_state}}</td>
+                  <td>{{item_price.created_at}}</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" data-dismiss="modal" type="button">Schließen</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -5,6 +5,34 @@ class PriceList::Api::Items < Grape::API
   format :json
   content_type :json, 'application/json;charset=UTF-8'
 
+  ##########
+  ## List ##
+  ##########
+  resource :lists do
+    desc('Return all available lists',       entity: PriceList::Entities::List,
+                                             params: PriceList::Entities::List.documentation,
+                                             is_array: true)
+    get :available do
+      present(
+        PriceList::Models::List.available,
+        with: PriceList::Entities::List
+      )
+    end
+
+    desc('Return all available lists including corresponding items',       entity: PriceList::Entities::ListWithItems,
+                                                                           params: PriceList::Entities::ListWithItems.documentation,
+                                                                           is_array: true)
+    get 'available/with_items' do
+      present(
+        PriceList::Models::List.available.preload(:available_items),
+        with: PriceList::Entities::ListWithItems
+      )
+    end
+  end
+
+  ###########
+  ## Items ##
+  ###########
   resource :items do
     desc('Return all available items',       entity: PriceList::Entities::Item,
                                              params: PriceList::Entities::Item.documentation,
@@ -12,6 +40,12 @@ class PriceList::Api::Items < Grape::API
     get :available do
       present(
         PriceList::Models::Item.available.preload(:last_price_changes),
+        with: PriceList::Entities::Item
+      )
+    end
+    get 'available/without_list' do
+      present(
+        PriceList::Models::Item.available.without_list.preload(:last_price_changes),
         with: PriceList::Entities::Item
       )
     end

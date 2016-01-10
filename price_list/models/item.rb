@@ -21,11 +21,19 @@ class PriceList::Models::Item < ActiveRecord::Base
   before_create :execute_parser
 
   validates :url, uniqueness: true, presence: true
+  validates(:list, :presence => {
+    :if => :list_id
+  })
 
   delegate(
     :favicon_url,
-    :to => :parser_constant
+    to: :parser_constant
   )
+
+  scope :without_list, lambda {
+    where(list_id: nil)
+  }
+
 
   def execute_parser
     self.title = parser.title
@@ -34,11 +42,11 @@ class PriceList::Models::Item < ActiveRecord::Base
       price = item_prices.build(price:       parser.price,
                                 stock_state: parser.stock_state,
                                 currency:    parser.currency)
-      if not price.valid?
+      if !price.valid?
         price.destroy
       elsif self.persisted?
-        self.save
-        self.touch
+        save
+        touch
         self.plot_price_chart!
       end
     end
@@ -65,8 +73,8 @@ class PriceList::Models::Item < ActiveRecord::Base
   end
 
   class << self
-    def create_from_url(url)
-      create(url: url, parser_class: PriceList::Parser.responsible_class_name(url))
+    def create_from_url(url, list_id)
+      create(list_id: list_id, url: url, parser_class: PriceList::Parser.responsible_class_name(url))
     end
 
     def refetch_prices

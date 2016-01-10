@@ -1,1 +1,1 @@
-thin start -R .\config.ru -D  --trace 
+thin start -R .\config.ru --trace 

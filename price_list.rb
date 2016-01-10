@@ -12,28 +12,16 @@ class PriceList
   autoload :Parser,     File.join(File.dirname(__FILE__), 'price_list', 'parser')
   autoload :Exception,  File.join(File.dirname(__FILE__), 'price_list', 'exception')
   autoload :PriceChart, File.join(File.dirname(__FILE__), 'price_list', 'price_chart')
-
-  db_name  = 'development'
-  if ENV['RAILS_ENV'] == 'test'
-    db_name = 'test'
-    puts 'Run in Test mode'
-  else
-    ActiveRecord::Base.logger = Logger.new(STDERR)
-  end
-
-  ActiveRecord::Base.establish_connection(
-    adapter: 'sqlite3',
-    database: "db/#{db_name}.db"
-  )
-  ActiveRecord::Migrator.migrate('db/migrations/')
-
+  autoload :Views,      File.join(File.dirname(__FILE__), 'price_list', 'views')
 
   AuthConfig = YAML.load_file(File.join(File.dirname(__FILE__), 'config/auth.yml'))
   Root = File.dirname(__FILE__)
 
-  require File.join(File.dirname(__FILE__),  'db/seeds.rb')
+  require File.join(File.dirname(__FILE__), 'db/seeds.rb')
 
   def initialize
+    PriceList::Views.new.render
+    self.class.initialize_db
     @filenames = ['', '.html', 'index.html', '/index.html', 'favicon.ico']
     @rack_static = ::Rack::Static.new(
       lambda { [404, {}, []] }, {
@@ -59,5 +47,21 @@ class PriceList
       ActiveRecord::Base.clear_active_connections! # fixes the connection leak
       return return_value
     end
+  end
+
+  def self.initialize_db
+    db_name = 'development'
+    if ENV['RAILS_ENV'] == 'test'
+      db_name = 'test'
+      puts 'Run in Test mode'
+    else
+      ActiveRecord::Base.logger = Logger.new(STDERR)
+    end
+
+    ActiveRecord::Base.establish_connection(
+      adapter: 'sqlite3',
+      database: "db/#{db_name}.db"
+    )
+    ActiveRecord::Migrator.migrate('db/migrations/')
   end
 end
