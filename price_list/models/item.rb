@@ -20,7 +20,7 @@ class PriceList::Models::Item < ActiveRecord::Base
 
   before_create :execute_parser
 
-  validates :url, uniqueness: true
+  validates :url, uniqueness: true, presence: true
 
   delegate(
     :favicon_url,

@@ -12,7 +12,9 @@
 /db/*.db
 /price_list/parser/*.rb
 /spec/parser/*
-/public/tmp/*
+/public/tmp/*.dat
+/public/tmp/*.png
+/public/tmp/*.conf
 ## Specific to RubyMotion:
 .dat*
 .repl_history
