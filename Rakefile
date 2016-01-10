@@ -9,3 +9,8 @@ task :routes do
     puts "     #{method} #{path}"
   end
 end
+
+desc 'Plot all price charts'
+task :plot_price_charts do
+   PriceList::Models::Item.available.each(&:plot_price_chart!) 
+end

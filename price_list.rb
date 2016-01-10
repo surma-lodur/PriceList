@@ -6,11 +6,12 @@ require 'active_record'
 Bundler.require
 
 class PriceList
-  autoload :Api,       File.join(File.dirname(__FILE__), 'price_list', 'api')
-  autoload :Models,    File.join(File.dirname(__FILE__), 'price_list', 'models')
-  autoload :Entities,  File.join(File.dirname(__FILE__), 'price_list', 'entities')
-  autoload :Parser,    File.join(File.dirname(__FILE__), 'price_list', 'parser')
-  autoload :Exception, File.join(File.dirname(__FILE__), 'price_list', 'exception')
+  autoload :Api,        File.join(File.dirname(__FILE__), 'price_list', 'api')
+  autoload :Models,     File.join(File.dirname(__FILE__), 'price_list', 'models')
+  autoload :Entities,   File.join(File.dirname(__FILE__), 'price_list', 'entities')
+  autoload :Parser,     File.join(File.dirname(__FILE__), 'price_list', 'parser')
+  autoload :Exception,  File.join(File.dirname(__FILE__), 'price_list', 'exception')
+  autoload :PriceChart, File.join(File.dirname(__FILE__), 'price_list', 'price_chart')
 
   db_name  = 'development'
   if ENV['RAILS_ENV'] == 'test'
@@ -24,10 +25,11 @@ class PriceList
     adapter: 'sqlite3',
     database: "db/#{db_name}.db"
   )
-  ActiveRecord::Base.connection.active?
   ActiveRecord::Migrator.migrate('db/migrations/')
 
+
   AuthConfig = YAML.load_file(File.join(File.dirname(__FILE__), 'config/auth.yml'))
+  Root = File.dirname(__FILE__)
 
   require File.join(File.dirname(__FILE__),  'db/seeds.rb')
 

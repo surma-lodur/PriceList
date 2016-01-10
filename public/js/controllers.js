@@ -18,24 +18,52 @@ numeral.language('de', {
 });
 numeral.language('de');
 
-var priceListApp = angular.module('priceListApp', [])
+var priceListApp = angular.module('priceListApp', []);
+
+// Register ellipsis attribute to concatenate too log texts
+priceListApp.directive('ellipsis', [function () {
+    return {
+        required: 'ngBind',
+        restrict: 'A',
+        priority: 100,
+        link: function ($scope, element, attrs, ctrl) {
+            $scope.hasEllipsis = false;
+            $scope.$watch(element.html(), function(value) {
+               if (!$scope.hasEllipsis) {
+                   // apply ellipsis only one
+                   $scope.hasEllipsis = true;
+                   element.dotdotdot({
+                     wrap: 'letter',
+                     height: 20,
+                     //watch: $(this)
+                   });
+               }
+            });
+        }
+    };
+}]);
+
 var priceListCrtl = priceListApp.controller('PriceListController', ['$scope', '$http', function($scope, $http) {
   $scope.admin_mode = false;
   $scope.currentItemIndex = -1;
   $scope.new_item_url = '';
 
+  // Covnert Formats in localized formats
   $scope.applyItemI18n = function(item) {
-    item.updated_at = new Date(item.updated_at).toString('M.d.yyyy, HH:mm');
+    item.updated_at = new Date(item.updated_at).toString('MM.dd.yyyy, HH:mm');
     if (item.last_price !== null)
       item.last_price.price = numeral(parseFloat(item.last_price.price)).format('0.00');
 
     jQuery(item.last_price_changes).each(function(index, price) {
-      price.created_at = new Date(price.created_at).toString('M.d.yyyy, HH:mm');
-      price.price = numeral(parseFloat(price.price)).format('0.00')
+      price.created_at_raw = new Date(price.created_at);
+      price.price_raw = price.price;
+      price.created_at = new Date(price.created_at).toString('MM.dd.yyyy, HH:mm');
+      price.price = numeral(parseFloat(price.price)).format('0.00');
     });
     return;
   };
 
+  // get initial list
   $http.get('v1/items/available.json').then(function(response) {
     jQuery(response.data).each(function(index, item) {
       $scope.applyItemI18n(item);
@@ -61,6 +89,7 @@ var priceListCrtl = priceListApp.controller('PriceListController', ['$scope', '$
 
   $scope.detailedInfosFor = function(item) {
     $scope.currentItemIndex = jQuery($scope.items).index(item);
+    return;
   };
 
   $scope.deleteItem = function(item) {

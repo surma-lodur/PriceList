@@ -10,9 +10,11 @@ module PriceList::Entities
 
   class Item < Grape::Entity
     expose :id
-    expose :title, documentation: { type: 'string', desc: 'Title of the article' }
+    expose :title,       documentation: { type: 'string', desc: 'Title of the article' }
+    expose :favicon_url, documentation: {type: 'url', desc: 'Favicon of the watched site'}
     expose :updated_at
-    expose :url
+    expose :price_chart_url
+    expose :url,         documentation: {type: 'url', desc: 'Site of the item watched'}
     expose :last_price_changes, using: PriceList::Entities::ItemPrice
     expose :last_price, using: PriceList::Entities::ItemPrice do |item|
       item.last_price_changes.first
