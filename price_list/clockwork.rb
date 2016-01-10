@@ -1,5 +1,7 @@
-
+# encoding: UTF-8
 require  File.join(File.dirname(__FILE__), '..', 'price_list')
+
+PriceList.initialize_db
 
 module Clockwork
   handler do |job|
