@@ -61,14 +61,25 @@ var priceListCrtl = priceListApp.controller('PriceListController', ['$scope', '$
       item.last_price.price_raw = item.last_price.price;
       item.last_price.price = numeral(parseFloat(item.last_price.price)).format('0.00');
     }
+    jQuery(item.suppliers).each(function(index, supplier) {
+      $scope.applySupplierI18n(supplier);
+    });
 
-    jQuery(item.last_price_changes).each(function(index, price) {
+    return;
+  };
+
+  $scope.applySupplierI18n = function(supplier) {
+    if (supplier.last_price !== null) {
+      supplier.last_price.price_raw = supplier.last_price.price;
+      supplier.last_price.price = numeral(parseFloat(supplier.last_price.price)).format('0.00');
+    }
+    supplier.updated_at = new Date(supplier.updated_at).toString('MM.dd.yyyy, HH:mm');
+    jQuery(supplier.last_price_changes).each(function(index, price) {
       price.created_at_raw = new Date(price.created_at);
       price.price_raw = price.price;
       price.created_at = new Date(price.created_at).toString('MM.dd.yyyy, HH:mm');
       price.price = numeral(parseFloat(price.price)).format('0.00');
     });
-    return;
   };
 
   $http.get('v1/lists/available/with_items.json').then(function(response) {
@@ -145,6 +156,15 @@ var priceListCrtl = priceListApp.controller('PriceListController', ['$scope', '$
     return;
   };
 
+  $scope.enableSuppliersTable = function(item) {
+    item.supplier_table = true;
+    return;
+  };
+  $scope.disableSuppliersTable = function(item) {
+    item.supplier_table = false;
+    return;
+  };
+
   $scope.editCurrentItem = function(list) {
     var edit_item = $scope.items[$scope.currentItemIndex];
     if (list !== null || list !== undefined) {
@@ -174,9 +194,13 @@ var priceListCrtl = priceListApp.controller('PriceListController', ['$scope', '$
 
   $scope.createItem = function(url) {;
     jQuery('#addItem').button('loading');
+    var list_id;
+    if ($scope.current_list !== undefined )
+      list_id = $scope.current_list.id;
+
     $http.post('admin/v1/items.json', {
       url: url,
-      list_id: $scope.current_list.id
+      list_id: list_id
     }).then(function(response) {
       $scope.applyItemI18n(response.data);
       $scope.items.push(response.data);
@@ -198,6 +222,64 @@ var priceListCrtl = priceListApp.controller('PriceListController', ['$scope', '$
     });
   };
 
+  //*****************
+  // Supplier methods
+  //*****************
+
+  $scope.isAvailable = function(object) {
+    return object.state == 'available';
+  };
+
+  $scope.isNotAvailable = function(object) {
+    return !$scope.isAvailable(object);
+  };
+
+  $scope.disableSupplier = function(supplier) {
+    $http.put('admin/v1/suppliers/' + supplier.id + '/disable.json', {
+      id: supplier.id
+    }).then(function(response) {
+      supplier.state = response.data.state;
+    }, function(response) {
+      alert(response.statusText + '\n' + response.data);
+    });
+  };
+
+  $scope.enableSupplier = function(supplier) {
+    $http.put('admin/v1/suppliers/' + supplier.id + '/enable.json', {
+      id: supplier.id
+    }).then(function(response) {
+      supplier.state = response.data.state;
+    }, function(response) {
+      alert(response.statusText + '\n' + response.data);
+    });
+  };
+
+
+  $scope.createSupplier = function(item, url) {;
+    jQuery('.addSupplier').button('loading');
+
+    $http.post('admin/v1/suppliers.json', {
+      url: url,
+      item_id: item.id
+    }).then(function(response) {
+      $scope.applySupplierI18n(response.data);
+      item.suppliers.push(response.data);
+      jQuery('input#supplierUrl').val('');
+      jQuery('.addSupplier').button('reset');
+    }, function(response) {
+      alert(response.statusText + '\n' + response.data);
+      jQuery('.addSupplier').button('reset');
+    });
+  };
+
+  $scope.deleteSupplier = function(item,supplier) {
+    $http.delete('admin/v1/suppliers/' + supplier.id + '.json').then(function(response) {
+      item.suppliers.splice(jQuery(item.suppliers).index(supplier), 1);
+    }, function(response) {
+      alert(response.statusText + '\n' + response.data);
+    });
+  };
+
   //*************
   // List methods
   //*************
@@ -206,7 +288,7 @@ var priceListCrtl = priceListApp.controller('PriceListController', ['$scope', '$
     $http.delete('admin/v1/lists/' + list.id + '.json').then(function(response) {
       $scope.lists.splice(jQuery($scope.lists).index(list), 1);
     }, function(response) {
-      alert(response.statusText + '\n' + response.data);
+      alert(response.statusText + '\n' + response.data.error);
     });
   };
 

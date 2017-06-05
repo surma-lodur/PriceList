@@ -5,7 +5,7 @@ PriceList.initialize_db
 
 module Clockwork
   handler do |job|
-    PriceList::Models::Item.refetch_prices
+    Supplier.refetch_prices
   end
 
   # handler receives the time when job is prepared to run in the 2nd argument

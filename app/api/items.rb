@@ -14,7 +14,7 @@ class PriceList::Api::Items < Grape::API
                                              is_array: true)
     get :available do
       present(
-        PriceList::Models::List.available,
+        List.available,
         with: PriceList::Entities::List
       )
     end
@@ -24,7 +24,8 @@ class PriceList::Api::Items < Grape::API
                                                                            is_array: true)
     get 'available/with_items' do
       present(
-        PriceList::Models::List.available.preload(:available_items),
+        List.available.preload(available_items: [:last_price_changes, suppliers: :last_price_changes]),
+
         with: PriceList::Entities::ListWithItems
       )
     end
@@ -39,13 +40,13 @@ class PriceList::Api::Items < Grape::API
                                              is_array: true)
     get :available do
       present(
-        PriceList::Models::Item.available.preload(:last_price_changes),
+        Item.available.preload(:last_price_changes, suppliers: :last_price_changes),
         with: PriceList::Entities::Item
       )
     end
     get 'available/without_list' do
       present(
-        PriceList::Models::Item.available.without_list.preload(:last_price_changes),
+        Item.available.without_list.preload(:last_price_changes, :suppliers),
         with: PriceList::Entities::Item
       )
     end
@@ -55,9 +56,9 @@ class PriceList::Api::Items < Grape::API
                                                  is_array: true)
     get :all do
       content_type 'text/plain;charset=UTF-8'
-      rows = ActiveRecord::Base.connection.select_rows(PriceList::Models::Item.available.joins(:item_prices).to_sql)
+      rows = ActiveRecord::Base.connection.select_rows(Item.available.joins(:item_prices).to_sql)
       CSV(str = '', col_sep: ';') do |csv|
-        csv << (PriceList::Models::Item.columns.map(&:name) + PriceList::Models::ItemPrice.columns.map(&:name))
+        csv << (Item.columns.map(&:name) + ItemPrice.columns.map(&:name))
         rows.each { |row| csv << row }
       end
       env['api.format'] = :binary

@@ -23,8 +23,15 @@
       <div style="padding-top: 75px">
         <ul class="nav nav-tabs">
           <li role="presentation" ng-class="tabActiveClass(null)"><a href="#" ng-click="setCurrentList(null)">Unkategorisiert</a></li>
-          <li role="presentation" ng-repeat="list in lists" ng-class="tabActiveClass(list)">
-            <a href="#" ng-bind="list.title" ng-click="setCurrentList(list)"></a>
+          <li role="presentation" style="white-space: nowrap" ng-repeat="list in lists" ng-class="tabActiveClass(list)">
+            <a href="#" ng-click="setCurrentList(list)">
+              {{list.title}}
+            <div class="btn-group btn-group-xs" role="group">
+              <button class="btn btn-danger" ng-click="deleteList(list)" ng-if="admin_mode" type="button">
+                <span aria-hidden="true" class="glyphicon glyphicon-trash"></span>
+              </button>
+            </div>
+            </a>
           </li>
         </ul>
         <%= render_partial('_table') %>

@@ -36,7 +36,7 @@ class PriceList::Api::Admin < Grape::API
     end
     post do
       present(
-        PriceList::Models::List.create(title: params[:title]),
+        List.create(title: params[:title]),
         with: PriceList::Entities::List
       )
     end
@@ -48,7 +48,7 @@ class PriceList::Api::Admin < Grape::API
     end
     put ':id' do
       present(
-        PriceList::Models::Item.List(params[:id]).update_attribute(:title, params[:title])
+        Item.List(params[:id]).update_attribute(:title, params[:title])
       )
     end
 
@@ -57,7 +57,9 @@ class PriceList::Api::Admin < Grape::API
       requires :id, type: String, desc: 'List ID.'
     end
     delete '/:id' do
-      PriceList::Models::List.find(params[:id]).destroy
+      list = List.find(params[:id])
+      error!('not empty') if list.items.present?
+      list.destroy
     end
   end
 
@@ -72,7 +74,7 @@ class PriceList::Api::Admin < Grape::API
     end
     post do
       present(
-        PriceList::Models::Item.create_from_url(params[:url], params[:list_id]),
+        Item.create_from_url(params[:url], params[:list_id]),
         with: PriceList::Entities::Item
       )
     end
@@ -84,7 +86,7 @@ class PriceList::Api::Admin < Grape::API
     end
     put ':id' do
       present(
-        PriceList::Models::Item.find(params[:id]).update_attribute(:list_id, params[:list_id])
+        Item.find(params[:id]).update_attribute(:list_id, params[:list_id])
       )
     end
 
@@ -93,7 +95,56 @@ class PriceList::Api::Admin < Grape::API
       requires :id, type: String, desc: 'Item ID.'
     end
     delete '/:id' do
-      PriceList::Models::Item.find(params[:id]).destroy
+      Item.find(params[:id]).destroy
+    end
+  end
+
+  resource :suppliers do
+    desc 'Create a Supplier.'
+    params do
+      requires :url, type: String, desc: 'Item URL'
+      requires :item_id, type: Integer, desc: 'Item ID'
+    end
+
+    post do
+      present(
+        Supplier.create(url: params[:url], item_id: params[:item_id]),
+        with: PriceList::Entities::Supplier
+      )
+    end
+
+    desc 'Disable an Supplier.'
+    params do
+      requires :id, type: Integer, desc: 'Supplier ID.'
+    end
+    put ':id/disable' do
+      supplier = Supplier.find(params[:id])
+      supplier.disable!
+      present(
+        supplier,
+        with: PriceList::Entities::Supplier
+      )
+    end
+
+    desc 'Enable an Supplier.'
+    params do
+      requires :id, type: Integer, desc: 'Supplier ID.'
+    end
+    put ':id/enable' do
+      supplier = Supplier.find(params[:id])
+      supplier.enable!
+      present(
+        supplier,
+        with: PriceList::Entities::Supplier
+      )
+    end
+
+    desc 'Delete a Supplier.'
+    params do
+      requires :id, type: String, desc: 'Suplier ID.'
+    end
+    delete '/:id' do
+      Supplier.find(params[:id]).destroy
     end
   end
 end

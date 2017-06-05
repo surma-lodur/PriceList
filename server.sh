@@ -1,1 +1,1 @@
-thin start -R ./config.ru -D -V --trace 
+bundle exec puma ./config.ru -p 3000 

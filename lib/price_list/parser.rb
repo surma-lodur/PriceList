@@ -4,7 +4,7 @@ require 'open-uri'
 require 'net/https'
 
 class PriceList::Parser
-  attr_accessor :url, :title, :price, :currency, :stock_state
+  attr_accessor :url, :title, :price, :currency, :stock_state, :doc
 
   Dir.glob(File.join(File.dirname(__FILE__), 'parser', '*.rb')).each do |file|
     autoload File.basename(file, '.rb').camelize.to_sym, file
@@ -32,18 +32,26 @@ class PriceList::Parser
       self.fetched_favicon_url
     end
 
+    def uri
+      URI(self.responsible_base_url)
+    end # .uri
+
+    def responsible_regexp
+       %r{#{Regexp.escape(self.uri.host).gsub('www','.*')}}
+    end # #responsible_regexp
+
     def responsible?(url)
-      pp %r{#{Regexp.escape(responsible_base_url)}}
-      pp url
-      url =~ %r{#{Regexp.escape(responsible_base_url)}}
+      pp self.responsible_regexp unless PriceList.test?
+      pp url unless PriceList.test?
+      url =~ self.responsible_regexp
     end
 
     def responsible_class_name(url)
-      puts "Check: #{url}"
+      puts "Check: #{url}" unless PriceList.test?
       constants.each do |constant|
-        puts "Probe: #{constant}"
+        puts "Probe: #{constant}" unless PriceList.test?
         responsible = module_eval(constant.to_s).responsible?(url)
-        puts "\t#{responsible}"
+        puts "\t#{responsible}"   unless PriceList.test?
         return "#{name}::#{constant}" if responsible
       end
       fail PriceList::Exception.new('no matching parser found for given url')

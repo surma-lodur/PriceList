@@ -1,5 +1,5 @@
 # encoding: UTF-8
-class StartSchema < ActiveRecord::Migration
+class StartSchema < ActiveRecord::Migration[4.2]
   def up
     create_table :items do |t|
       t.string :title

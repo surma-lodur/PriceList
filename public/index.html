@@ -87,8 +87,15 @@
       <div style="padding-top: 75px">
         <ul class="nav nav-tabs">
           <li role="presentation" ng-class="tabActiveClass(null)"><a href="#" ng-click="setCurrentList(null)">Unkategorisiert</a></li>
-          <li role="presentation" ng-repeat="list in lists" ng-class="tabActiveClass(list)">
-            <a href="#" ng-bind="list.title" ng-click="setCurrentList(list)"></a>
+          <li role="presentation" style="white-space: nowrap" ng-repeat="list in lists" ng-class="tabActiveClass(list)">
+            <a href="#" ng-click="setCurrentList(list)">
+              {{list.title}}
+            <div class="btn-group btn-group-xs" role="group">
+              <button class="btn btn-danger" ng-click="deleteList(list)" ng-if="admin_mode" type="button">
+                <span aria-hidden="true" class="glyphicon glyphicon-trash"></span>
+              </button>
+            </div>
+            </a>
           </li>
         </ul>
         <table class="table table-hover table-striped table-bordered">
@@ -104,27 +111,75 @@
     <th>
       <img height="16" ng-src="{{item.favicon_url}}" width="16"/>
     </th>
-    <td>
-      <a ng-href="{{item.url}}" target="_blank">
-        <span ellipsis ng-bind="item.title" style="white-space: nowrap"></span>
-      </a>
+    <td style="padding: 0;">
+      <div style="margin: 8px;">
+        <a ng-href="{{item.url}}" target="_blank">
+          <span ellipsis ng-bind="item.title" style="white-space: nowrap"></span>
+        </a>
+      </div>
+
+      <small>
+			<table class="table table-hover table-striped table-condensed" style="margin: 0" ng-show="item.supplier_table">
+				<tr ng-repeat="supplier in item.suppliers">
+					<th>
+						<img height="16" ng-src="{{supplier.favicon_url}}" width="16"/>
+					</th>
+					<td>{{supplier.updated_at}}</td>
+					<td>{{supplier.last_price.price}}&nbsp;{{supplier.last_price.currency}}</td>
+					<td>{{supplier.last_price.stock_state}}</td>
+					<td ng-if="admin_mode">
+      			<div aria-label="Detailed" class="btn-group btn-group-xs" role="group">
+							<button class="btn btn-waring" ng-click="disableSupplier(supplier)" ng-if="isAvailable(supplier)" type="button">
+								<span aria-hidden="true" class="glyphicon glyphicon-remove"></span>
+							</button>
+							<button class="btn btn-waring" ng-click="enableSupplier(supplier)" ng-if="isNotAvailable(supplier)" type="button">
+								<span aria-hidden="true" class="glyphicon glyphicon-ok"></span>
+							</button>
+              <button class="btn btn-danger" ng-click="deleteSupplier(item, supplier)" type="button">
+                <span aria-hidden="true" class="glyphicon glyphicon-trash"></span>
+              </button>
+						</div>
+					</td>
+				</tr>
+				<tr class="success" ng-if="admin_mode">
+					<th>#</th>
+					<td colspan="3">
+						<input class="form-control input-sm" id="supplierUrl" ng-model="new_supplier_url" placeholder="URL" type="url">
+					</td>
+					<td>
+						<button autocomplete="off" class="addSupplier btn btn-success btn-xs" data-loading-text="..." ng-click="createSupplier(item, new_supplier_url)" type="button">
+							<span aria-hidden="true" class="glyphicon glyphicon-plus"></span>
+						</button>
+					</td>
+				</tr>
+      </table>
+      </small>
     </td>
     <td>{{item.updated_at}}</td>
     <td>{{item.last_price.price}}&nbsp;{{item.last_price.currency}}</td>
     <td>{{item.last_price.stock_state}}</td>
     <td>
       <div aria-label="Detailed" class="btn-group btn-group-xs" role="group">
+        <button class="btn btn-default" 
+                ng-click="enableSuppliersTable(item)" 
+                ng-if="!item.supplier_table"
+                type="button">
+          <span aria-hidden="true" class="glyphicon glyphicon-arrow-down"></span>
+        </button>
+        <button class="btn btn-default" 
+                ng-click="disableSuppliersTable(item)" 
+                ng-if="item.supplier_table"
+                type="button">
+          <span aria-hidden="true" class="glyphicon glyphicon-arrow-up"></span>
+        </button>
         <button class="btn btn-default" data-target="#detailedInfoModal" data-toggle="modal" ng-click="detailedInfosFor(item)" type="button">
           <span aria-hidden="true" class="glyphicon glyphicon-stats"></span>
-          <span class="hidden-xs hidden-sm">Anzeigen</span>
         </button>
         <button class="btn btn-warning" data-target="#editItemModal" data-toggle="modal" ng-click="detailedInfosFor(item)" ng-if="admin_mode" type="button">
           <span aria-hidden="true" class="glyphicon glyphicon-pencil"></span>
-          <span class="hidden-xs hidden-sm">Bearbeiten</span>
         </button>
         <button class="btn btn-danger" ng-click="deleteItem(item)" ng-if="admin_mode" type="button">
           <span aria-hidden="true" class="glyphicon glyphicon-trash"></span>
-          <span class="hidden-xs hidden-sm">Löschen</span>
         </button>
       </div>
     </td>
@@ -176,13 +231,18 @@
               </div>
             </div>
             <div class="col-lg-4 col-md-10 col-sm-9 col-xs-13">
-              <table class="table table-hover table-striped table-condensed">
-                <tr ng-repeat="item_price in items[currentItemIndex].last_price_changes">
+              <small>
+              <table class="table table-hover table-striped table-condensed" ng-repeat="supplier in items[currentItemIndex].suppliers">
+                <tr ng-repeat="item_price in supplier.last_price_changes">
+                  <th>
+                    <img height="16" ng-src="{{supplier.favicon_url}}" width="16"/>
+                  </th>
                   <td>{{item_price.price}}&nbsp;{{item_price.currency}}</td>
                   <td>{{item_price.stock_state}}</td>
                   <td>{{item_price.created_at}}</td>
                 </tr>
               </table>
+              <small>
             </div>
           </div>
         </div>

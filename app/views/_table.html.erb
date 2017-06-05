@@ -1,0 +1,108 @@
+<table class="table table-hover table-striped table-bordered">
+  <tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Aktualisiert</th>
+    <th>Preis</th>
+    <th>Bestand</th>
+    <th></th>
+  </tr>
+  <tr ng-repeat="item in items">
+    <th>
+      <img height="16" ng-src="{{item.favicon_url}}" width="16"/>
+    </th>
+    <td style="padding: 0;">
+      <div style="margin: 8px;">
+        <a ng-href="{{item.url}}" target="_blank">
+          <span ellipsis ng-bind="item.title" style="white-space: nowrap"></span>
+        </a>
+      </div>
+
+      <small>
+			<table class="table table-hover table-striped table-condensed" style="margin: 0" ng-show="item.supplier_table">
+				<tr ng-repeat="supplier in item.suppliers">
+					<th>
+						<img height="16" ng-src="{{supplier.favicon_url}}" width="16"/>
+					</th>
+					<td>{{supplier.updated_at}}</td>
+					<td>{{supplier.last_price.price}}&nbsp;{{supplier.last_price.currency}}</td>
+					<td>{{supplier.last_price.stock_state}}</td>
+					<td ng-if="admin_mode">
+      			<div aria-label="Detailed" class="btn-group btn-group-xs" role="group">
+							<button class="btn btn-waring" ng-click="disableSupplier(supplier)" ng-if="isAvailable(supplier)" type="button">
+								<span aria-hidden="true" class="glyphicon glyphicon-remove"></span>
+							</button>
+							<button class="btn btn-waring" ng-click="enableSupplier(supplier)" ng-if="isNotAvailable(supplier)" type="button">
+								<span aria-hidden="true" class="glyphicon glyphicon-ok"></span>
+							</button>
+              <button class="btn btn-danger" ng-click="deleteSupplier(item, supplier)" type="button">
+                <span aria-hidden="true" class="glyphicon glyphicon-trash"></span>
+              </button>
+						</div>
+					</td>
+				</tr>
+				<tr class="success" ng-if="admin_mode">
+					<th>#</th>
+					<td colspan="3">
+						<input class="form-control input-sm" id="supplierUrl" ng-model="new_supplier_url" placeholder="URL" type="url">
+					</td>
+					<td>
+						<button autocomplete="off" class="addSupplier btn btn-success btn-xs" data-loading-text="..." ng-click="createSupplier(item, new_supplier_url)" type="button">
+							<span aria-hidden="true" class="glyphicon glyphicon-plus"></span>
+						</button>
+					</td>
+				</tr>
+      </table>
+      </small>
+    </td>
+    <td>{{item.updated_at}}</td>
+    <td>{{item.last_price.price}}&nbsp;{{item.last_price.currency}}</td>
+    <td>{{item.last_price.stock_state}}</td>
+    <td>
+      <div aria-label="Detailed" class="btn-group btn-group-xs" role="group">
+        <button class="btn btn-default" 
+                ng-click="enableSuppliersTable(item)" 
+                ng-if="!item.supplier_table"
+                type="button">
+          <span aria-hidden="true" class="glyphicon glyphicon-arrow-down"></span>
+        </button>
+        <button class="btn btn-default" 
+                ng-click="disableSuppliersTable(item)" 
+                ng-if="item.supplier_table"
+                type="button">
+          <span aria-hidden="true" class="glyphicon glyphicon-arrow-up"></span>
+        </button>
+        <button class="btn btn-default" data-target="#detailedInfoModal" data-toggle="modal" ng-click="detailedInfosFor(item)" type="button">
+          <span aria-hidden="true" class="glyphicon glyphicon-stats"></span>
+        </button>
+        <button class="btn btn-warning" data-target="#editItemModal" data-toggle="modal" ng-click="detailedInfosFor(item)" ng-if="admin_mode" type="button">
+          <span aria-hidden="true" class="glyphicon glyphicon-pencil"></span>
+        </button>
+        <button class="btn btn-danger" ng-click="deleteItem(item)" ng-if="admin_mode" type="button">
+          <span aria-hidden="true" class="glyphicon glyphicon-trash"></span>
+        </button>
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <th></th>
+    <th></th>
+    <th>
+      <b>Summe:</b>
+    </th>
+    <th>{{localized_price_sum}}&nbsp;{{localized_currency_sum}}</th>
+    <th></th>
+    <th></th>
+  </tr>
+  <tr class="success" ng-if="admin_mode">
+    <th>#</th>
+    <td colspan="4">
+      <input class="form-control" id="itemUrl" ng-model="new_item_url" placeholder="URL" type="url">
+    </td>
+    <td>
+      <button autocomplete="off" class="btn btn-success btn-sm" data-loading-text="..." id="addItem" ng-click="createItem(new_item_url)" type="button">
+        <span aria-hidden="true" class="glyphicon glyphicon-plus"></span>
+      </button>
+    </td>
+  </tr>
+</table>

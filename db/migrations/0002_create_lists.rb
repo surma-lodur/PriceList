@@ -1,5 +1,5 @@
 # encoding: UTF-8
-class CreateLists < ActiveRecord::Migration
+class CreateLists < ActiveRecord::Migration[4.2]
   def up
     create_table :lists do |t|
       t.string :title
