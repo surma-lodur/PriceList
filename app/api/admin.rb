@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 class PriceList::Api::Admin < Grape::API
   version 'v1', using: :path
   format :json
@@ -14,11 +12,9 @@ class PriceList::Api::Admin < Grape::API
   ##########
   ## Auth ##
   ##########
-  auth(:http_digest, realm: 'Protected Api', opaque: 'Login required') do |_username|
-    # lookup the user's password here
-    {
-      PriceList::AuthConfig['username'] => PriceList::AuthConfig['password']
-    }[PriceList::AuthConfig['username']]
+  http_basic do |username, password|
+    username == PriceList::AuthConfig['username'] &&
+      password == PriceList::AuthConfig['password']
   end
 
   get :authorize do

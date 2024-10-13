@@ -1,4 +1,3 @@
-# encoding: UTF-8
 class Item < ActiveRecord::Base
   include ActiveModel::Transitions
 
@@ -14,18 +13,16 @@ class Item < ActiveRecord::Base
   belongs_to :list
   has_many   :suppliers, dependent: :destroy
 
-  has_many(  :item_prices, dependent: :destroy)
-  has_many(  :last_price_changes, -> {
-    order('created_at DESC').limit(10) 
-  }, {
-    foreign_key: 'item_id',
-    class_name:  'ItemPrice'
-  })
+  has_many(:item_prices, dependent: :destroy)
+  has_many(:last_price_changes, lambda {
+    order('created_at DESC').limit(10)
+  },
+           foreign_key: 'item_id',
+           class_name: 'ItemPrice')
 
-
-  validates(:list, :presence => {
-    :if => :list_id
-  })
+  validates(:list, presence: {
+              if: :list_id
+            })
 
   delegate(
     :favicon_url,
@@ -38,9 +35,8 @@ class Item < ActiveRecord::Base
     where(list_id: nil)
   }
 
-
   def cheapest_supplier
-    self.suppliers.first
+    suppliers.first
   end # #cheapest_supplier
 
   def price_chart_url
@@ -53,11 +49,11 @@ class Item < ActiveRecord::Base
 
   class << self
     def create_from_url(url, list_id = nil)
-      item = self.new(list_id: list_id)
- supp=     item.suppliers.build(item: item, url: url)
- pp supp.item.title
+      item = new(list_id:)
+      supp = item.suppliers.build(item:, url:)
+      pp supp.item.title
       item.save!
-      return item
+      item
     end
 
     def refetch_prices

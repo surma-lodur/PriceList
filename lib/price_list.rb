@@ -1,6 +1,6 @@
-# encoding: UTF-8
 require 'rubygems'
 require 'bundler/setup'
+require 'yaml'
 require 'pp'
 Bundler.require
 
@@ -18,24 +18,24 @@ class PriceList
   require File.join(File.dirname(__FILE__), '..', 'app', 'entities')
   require File.join(File.dirname(__FILE__), '..', 'app', 'api')
 
-
-  require_relative  '../db/seeds' # File.join(File.dirname(__FILE__), 'db/seeds.rb')
+  require_relative '../db/seeds' # File.join(File.dirname(__FILE__), 'db/seeds.rb')
 
   def initialize
     PriceList::Views.new.render
     PriceList::Models.initialize_db
     @filenames = ['', '.html', 'index.html', '/index.html', 'favicon.ico']
     @rack_static = ::Rack::Static.new(
-      lambda { [404, {}, []] }, {
+      -> { [404, {}, []] }, {
         root: File.expand_path(File.join('../..', 'public'), __FILE__),
-        urls: %w(/)
-      })
+        urls: %w[/]
+      }
+    )
   end
 
   def call(env)
     if env['HTTP_USER_AGENT'] and env['HTTP_USER_AGENT'] =~ /facebook/
       puts '!!Catched Facebook'
-      return env
+      env
     else
       ActiveRecord::Base.verify_active_connections! if ActiveRecord::Base.respond_to?(:verify_active_connections!)
       request_path = env['PATH_INFO']
@@ -45,9 +45,8 @@ class PriceList
         return response unless [404, 405].include?(response[0])
       end
       # api
-      return_value = Api.call(env)
-      ActiveRecord::Base.clear_active_connections! # fixes the connection leak
-      return return_value
+      Api.call(env)
+
     end
   end
 

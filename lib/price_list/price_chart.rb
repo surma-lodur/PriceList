@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 module PriceList::PriceChart
   class << self
     def plot_item(item)
@@ -17,6 +15,7 @@ module PriceList::PriceChart
     protected
 
     def store_plot_data(item)
+      FileUtils.mkdir_p(base_path)
       item.suppliers.each_with_index do |supplier, index|
         File.open(plot_dat_path(supplier, index + 1), 'w') do |file|
           supplier.item_prices.order('created_at DESC').each do |price_change|
@@ -55,18 +54,17 @@ module PriceList::PriceChart
       set style line 12 lc rgb'#808080' lt 0 lw 1
       set grid back ls 12
 
-      #{item.suppliers.map { |supplier| self.plot_lines(supplier, index) }* "\n"  }
+      #{item.suppliers.map { |supplier| plot_lines(supplier, index) } * "\n"}
       " # steps candlesticks
     end
 
     def plot_lines(supplier, index)
-      index = index + 1
-      #"plot \"#{plot_dat_path(supplier, index)}\" u 1:2 index 0 notitle w fsteps ls 1,\\
-            #''                        u 1:2 index 0 notitle w points ls #{index},
-      #"
+      index += 1
+      # "plot \"#{plot_dat_path(supplier, index)}\" u 1:2 index 0 notitle w fsteps ls 1,\\
+      # ''                        u 1:2 index 0 notitle w points ls #{index},
+      # "
       "plot \"#{plot_dat_path(supplier, index)}\" u 1:2 index 0 notitle w fsteps ls #{index},
       "
-      
     end # #plot_lines
 
     def plot_conf_path(item)
@@ -80,5 +78,5 @@ module PriceList::PriceChart
     def base_path(*args)
       File.join(* ([PriceList::Root, 'public', 'tmp'] + args))
     end
- end
+  end
 end

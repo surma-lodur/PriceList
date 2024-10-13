@@ -1,28 +1,32 @@
 source 'https://rubygems.org'
 
-gem 'grape'
-gem 'grape-swagger'
-gem 'grape-entity'
-gem 'haml'
-gem 'nokogiri'#, '>= 1.6.7.rc'
 gem 'clockwork'
+gem 'grape'
+gem 'grape-entity'
 
+gem 'grape-swagger'
+gem 'grape-swagger-entity'
+gem 'grape-swagger-representable'
+gem 'haml'
+gem 'nokogiri'
+gem 'open-uri'
+
+gem 'activerecord' # , '~> 5.1.1'
+gem 'puma'
 gem 'rack'
 gem 'rake'
-gem 'puma'
 gem 'sqlite3'
-gem 'activerecord', '~> 5.1.1'
 gem 'transitions', require: ['transitions', 'active_model/transitions']
 
 group :development, :test do
-  gem 'rspec'
   gem 'database_cleaner'
-  gem 'guard-rspec'
+  gem 'factory_bot'
   gem 'faker'
+  gem 'guard-rspec'
   gem 'rack-test'
-  gem 'factory_girl'
+  gem 'rspec'
   if Gem.win_platform?
-    gem 'win32console'
     gem 'wdm'
+    gem 'win32console'
   end
 end

@@ -1,4 +1,3 @@
-# encoding: UTF-8
 class PriceList::Api < Grape::API
   autoload :Items,      File.join(File.dirname(__FILE__), 'api', 'items.rb')
   autoload :Admin,      File.join(File.dirname(__FILE__), 'api', 'admin.rb')

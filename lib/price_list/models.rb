@@ -1,4 +1,3 @@
-# encoding: UTF-8
 require 'active_record'
 require 'sqlite3'
 
@@ -20,6 +19,8 @@ module PriceList::Models
       adapter: 'sqlite3',
       database: File.join(PriceList::Root, 'db', "#{db_name}.db")
     )
-    ActiveRecord::Migrator.migrate(File.join(PriceList::Root, 'db','migrations'))
+    migrations_path = File.join(PriceList::Root, 'db', 'migrations')
+    migration_context = ActiveRecord::MigrationContext.new(migrations_path) # , ActiveRecord::SchemaMigration)
+    migration_context.migrate
   end
 end

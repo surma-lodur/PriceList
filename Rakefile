@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 require_relative File.join('lib', 'price_list')
 desc 'API Routes'
 task :routes do
@@ -12,15 +10,15 @@ end
 
 desc 'Plot all price charts'
 task :plot_price_charts do
-  Item.available.each(&:plot_price_chart!) 
+  Item.available.each(&:plot_price_chart!)
 end
 
-desc 'test parser ENV["URL"]' 
-task :parse do 
-  parser= PriceList::Parser.
-    responsible_class_name(ENV['URL']).
-    constantize.
-    new(ENV['URL'])
+desc 'test parser ENV["URL"]'
+task :parse do
+  parser = PriceList::Parser
+           .responsible_class_name(ENV['URL'])
+           .constantize
+           .new(ENV['URL'])
   parser.parse
   pp parser
 end
@@ -43,8 +41,9 @@ desc 'console'
 task :console do
   require 'irb'
   require 'irb/completion'
+  Reline.autocompletion = IRB.conf[:USE_AUTOCOMPLETE] = false
   PriceList::Models.initialize_db
   ActiveRecord::Base.connection
   ARGV.clear
-  IRB.start()
+  IRB.start
 end

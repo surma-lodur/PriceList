@@ -19,10 +19,10 @@
 
 ENV['RAILS_ENV'] = 'test'
 
-require File.join(File.dirname(__FILE__),  '../lib/price_list')
+require File.join(File.dirname(__FILE__), '../lib/price_list')
 require 'database_cleaner'
 require 'rack/test'
-require 'factory_girl'
+require 'factory_bot'
 
 PriceList::Models.initialize_db
 
@@ -50,7 +50,6 @@ RSpec.configure do |config|
     mocks.verify_partial_doubles = true
   end
 
-
   config.before(:suite) do
     DatabaseCleaner.strategy = :truncation
     DatabaseCleaner.clean_with(:truncation)
@@ -61,5 +60,4 @@ RSpec.configure do |config|
       example.run
     end
   end
-
 end
