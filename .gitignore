@@ -10,11 +10,12 @@
 /test/version_tmp/
 /tmp/
 /db/*.db
+/db/*.db-shm
+/db/*.db-wal
 /lib/price_list/parser/*.rb
 /spec/parser/*
-/public/tmp/*.dat
-/public/tmp/*.png
-/public/tmp/*.conf
+/public/tmp/*
+
 ## Specific to RubyMotion:
 .dat*
 .repl_history

@@ -1,5 +1,4 @@
 require 'active_record'
-require 'sqlite3'
 
 module PriceList::Models
   Dir.glob(File.join(PriceList::Root, 'app', 'models', '*.rb')) do |model|

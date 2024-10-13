@@ -1,4 +1,8 @@
+ENV["IRB_USE_AUTOCOMPLETE"] = "false" 
+
 require_relative File.join('lib', 'price_list')
+
+
 desc 'API Routes'
 task :routes do
   PriceList::Api.routes.each do |api|
@@ -40,8 +44,8 @@ end
 desc 'console'
 task :console do
   require 'irb'
-  require 'irb/completion'
   Reline.autocompletion = IRB.conf[:USE_AUTOCOMPLETE] = false
+   IRB.conf[:USE_MULTILINE] = false
   PriceList::Models.initialize_db
   ActiveRecord::Base.connection
   ARGV.clear

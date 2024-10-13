@@ -1,20 +1,22 @@
-# encoding: UTF-8
 require 'erb'
-#require 'haml'
+
 class PriceList::Views
   def render
     File.open(File.join(PriceList::Root, 'public', 'index.html'), 'w') do |file|
       file.write(ERB.new(read_file('index.html.erb')).result(binding))
-      #file.write(Haml::Engine.new(read_file('index.haml')).render(binding))
+    end
+
+    File.open(File.join(PriceList::Root, 'public', 'swagger-ui.html'), 'w') do |file|
+      file.write(ERB.new(read_file('swagger-ui.html.erb')).result(binding))
     end
   end
 
   def render_partial(name, options = {})
-puts "render partial #{name}"
+    puts "render partial #{name}"
     proc_var = Class.new(PriceList::Views) do
       (options[:locals] || []).each do |key, value|
         define_method(key) do
-          return value
+          value
         end
       end
 
@@ -24,7 +26,6 @@ puts "render partial #{name}"
     end
 
     ERB.new(read_file("#{name}.html.erb")).result(proc_var.new.get_binding)
-    #Haml::Engine.new(read_file("#{name}.haml")).render(proc_var.new.get_binding)
   end
 
   def read_file(*args)
